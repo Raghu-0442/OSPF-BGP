@@ -1,0 +1,312 @@
+Cisco LAB Full Configuration
+
+========================
+DNS_SERVER
+========================
+interface Loopback1
+ ip address 1.1.1.1 255.255.255.255
+!
+interface Loopback2
+ ip address 2.2.2.2 255.255.255.255
+!
+interface g0/0
+ ip address dhcp
+ ip nat outside
+ no shut
+!
+interface g0/1
+ ip address 10.10.10.9 255.255.255.252
+ ip nat inside
+  ip ospf 1 area 0
+ no shut
+!
+interface g0/2
+ ip address 12.12.12.1 255.255.255.252
+ ip nat inside
+  ip ospf 1 area 0
+ no shut
+!
+access-list 1 permit any
+!
+ip nat inside source list 1 interface g0/0 overload
+!
+ip route 0.0.0.0 0.0.0.0 dhcp
+!
+router ospf 1
+ network 10.10.10.8 0.0.0.3 area 0
+ network 12.12.12.0 0.0.0.3 area 0
+ default-information originate
+
+========================
+TATA-1
+========================
+
+hostname TATA-1
+!
+interface Loopback0
+ ip address 1.1.1.1 255.255.255.255
+!
+interface GigabitEthernet0/0
+ ip address 10.10.1.1 255.255.255.252
+ no shutdown
+!
+router bgp 100
+ neighbor 10.10.1.2 remote-as 6500
+ network 1.1.1.1 mask 255.255.255.255
+
+========================
+Airtel-2
+========================
+
+hostname Airtel-2
+!
+interface Loopback0
+ ip address 2.2.2.2 255.255.255.255
+!
+interface GigabitEthernet0/0
+ ip address 12.12.0.1 255.255.255.252
+ no shutdown
+!
+router bgp 200
+ neighbor 12.12.0.2 remote-as 6500
+ network 2.2.2.2 mask 255.255.255.255
+
+========================
+CE-11
+========================
+
+hostname CE-11
+!
+interface Loopback0
+ ip address 11.11.11.11 255.255.255.255
+!
+interface GigabitEthernet0/0
+ ip address 21.21.21.1 255.255.255.252
+!
+interface GigabitEthernet0/1
+ ip address 10.10.1.2 255.255.255.252
+!
+interface GigabitEthernet0/2
+ ip address 10.10.0.1 255.255.255.252
+!
+router bgp 6500
+ neighbor 10.10.1.1 remote-as 100
+ neighbor 21.21.21.2 remote-as 6500
+ network 11.11.11.11 mask 255.255.255.255
+!
+router ospf 10
+ network 10.10.0.0 0.0.0.3 area 0
+ redistribute bgp 6500 subnets
+
+========================
+CE-12
+========================
+
+hostname CE-12
+!
+interface Loopback0
+ ip address 12.12.12.12 255.255.255.255
+!
+interface GigabitEthernet0/0
+ ip address 21.21.21.2 255.255.255.252
+ no shutdown
+!
+interface GigabitEthernet0/1
+ ip address 12.12.0.2 255.255.255.252
+ no shutdown
+!
+interface GigabitEthernet0/2
+ ip address 12.12.0.1 255.255.255.252
+ no shutdown
+!
+router bgp 6500
+ bgp log-neighbor-changes
+ neighbor 12.12.0.1 remote-as 200
+ neighbor 21.21.21.1 remote-as 6500
+ neighbor 21.21.21.1 update-source GigabitEthernet0/0
+ network 12.12.12.12 mask 255.255.255.255
+!
+router ospf 10
+ router-id 12.12.12.12
+ network 12.12.0.0 0.0.0.3 area 0
+ network 12.12.12.12 0.0.0.0 area 0
+ redistribute bgp 6500 subnets
+
+========================
+CS-13
+========================
+hostname CS-13
+!
+interface Loopback0
+ ip address 13.13.13.13 255.255.255.255
+!
+interface GigabitEthernet0/0
+ ip address 10.10.0.2 255.255.255.252
+ no shutdown
+!
+interface GigabitEthernet0/1
+ ip address 10.10.2.1 255.255.255.252
+ no shutdown
+!
+router ospf 10
+ router-id 13.13.13.13
+ network 10.10.0.0 0.0.0.3 area 0
+ network 10.10.2.0 0.0.0.3 area 0
+ network 13.13.13.13 0.0.0.0 area 0
+
+========================
+CS-14
+========================
+hostname CS-14
+!
+interface Loopback0
+ ip address 14.14.14.14 255.255.255.255
+!
+interface GigabitEthernet0/0
+ ip address 12.12.0.2 255.255.255.252
+ no shutdown
+!
+interface GigabitEthernet0/1
+ ip address 12.12.2.1 255.255.255.252
+ no shutdown
+!
+router ospf 10
+ router-id 14.14.14.14
+ network 12.12.0.0 0.0.0.3 area 0
+ network 12.12.2.0 0.0.0.3 area 0
+ network 14.14.14.14 0.0.0.0 area 0
+
+========================
+T-15
+========================
+
+hostname T-15
+!
+interface Loopback0
+ ip address 15.15.15.15 255.255.255.255
+!
+interface GigabitEthernet0/0
+ ip address 10.10.2.2 255.255.255.252
+ no shutdown
+!
+interface GigabitEthernet0/1
+ ip address 10.10.3.2 255.255.255.252
+ no shutdown
+!
+router ospf 20
+ router-id 15.15.15.15
+ network 10.10.2.0 0.0.0.3 area 1
+ network 10.10.3.0 0.0.0.3 area 1
+ network 15.15.15.15 0.0.0.0 area 1
+
+========================
+T-16
+========================
+hostname T-16
+!
+interface Loopback0
+ ip address 16.16.16.16 255.255.255.255
+!
+interface GigabitEthernet0/0
+ ip address 12.12.2.2 255.255.255.252
+ no shutdown
+!
+interface GigabitEthernet0/1
+ ip address 12.12.3.1 255.255.255.252
+ no shutdown
+!
+router ospf 30
+ router-id 16.16.16.16
+ network 12.12.2.0 0.0.0.3 area 2
+ network 12.12.3.0 0.0.0.3 area 2
+ network 16.16.16.16 0.0.0.0 area 2
+========================
+T-17
+========================
+hostname T-17
+!
+interface Loopback0
+ ip address 17.17.17.17 255.255.255.255
+!
+interface GigabitEthernet0/0
+ ip address 10.10.3.1 255.255.255.252
+ no shutdown
+!
+interface GigabitEthernet0/1
+ ip address 10.10.4.1 255.255.255.252
+ no shutdown
+!
+router ospf 20
+ router-id 17.17.17.17
+ network 10.10.3.0 0.0.0.3 area 1
+ network 17.17.17.17 0.0.0.0 area 1
+!
+router eigrp 100
+ network 10.10.4.0 0.0.0.3
+ network 17.17.17.17 0.0.0.0
+ no auto-summary
+ redistribute ospf 20 metric 10000 100 255 1 1500
+
+========================
+T-18
+========================
+
+hostname T-18
+!
+interface Loopback0
+ ip address 18.18.18.18 255.255.255.255
+!
+interface GigabitEthernet0/0
+ ip address 12.12.3.2 255.255.255.252
+ no shutdown
+!
+interface GigabitEthernet0/1
+ ip address 12.12.4.1 255.255.255.252
+ no shutdown
+!
+router ospf 30
+ router-id 18.18.18.18
+ network 12.12.3.0 0.0.0.3 area 2
+ network 18.18.18.18 0.0.0.0 area 2
+!
+router eigrp 200
+ network 12.12.4.0 0.0.0.3
+ network 18.18.18.18 0.0.0.0
+ no auto-summary
+ redistribute ospf 30 metric 10000 100 255 1 1500
+
+========================
+T-19
+========================
+hostname T-19
+!
+interface Loopback0
+ ip address 19.19.19.19 255.255.255.255
+!
+interface GigabitEthernet0/0
+ ip address 10.10.4.2 255.255.255.252
+ no shutdown
+!
+router eigrp 100
+ network 10.10.4.0 0.0.0.3
+ network 19.19.19.19 0.0.0.0
+ no auto-summary
+========================
+T-20
+========================
+hostname T-20
+!
+interface Loopback0
+ ip address 20.20.20.20 255.255.255.255
+!
+interface GigabitEthernet0/0
+ ip address 12.12.4.2 255.255.255.252
+ no shutdown
+!
+router eigrp 200
+ network 12.12.4.0 0.0.0.3
+ network 20.20.20.20 0.0.0.0
+ no auto-summary
+
+===================================XXXXXXXXXXXXXXXXXXX
+
